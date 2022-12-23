@@ -1,4 +1,4 @@
-package helpers
+package logger
 
 import (
 	"fmt"
@@ -25,4 +25,9 @@ func Warn(text ...string) {
 func Error(text ...string) {
 	red := color.New().Red(strings.Join(text, ""))
 	fmt.Println(red)
+}
+
+func Panic(text ...string) {
+	red := color.New().Red(strings.Join(text, ""))
+	panic(red)
 }

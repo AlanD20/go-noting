@@ -17,6 +17,7 @@ func Execute() {
 
 	rootCmd.AddCommand(NewMigrateCommand())
 	rootCmd.AddCommand(NewServeCommand())
+	rootCmd.AddCommand(NewKeyCommand())
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

@@ -1,7 +1,7 @@
 package runner
 
 import (
-	"github.com/aland20/go-noting/app/helpers"
+	logger "github.com/aland20/go-noting/app/helpers"
 	"github.com/aland20/go-noting/database"
 	"github.com/aland20/go-noting/database/migrations"
 )
@@ -10,11 +10,11 @@ func AutoMigrate() {
 
 	db := database.Connect()
 
-	helpers.Info("Migrating database...")
+	logger.Info("Migrating database...")
 
 	db.AutoMigrate(&migrations.User{}, &migrations.Note{})
 
-	helpers.Success("Database migrated successfully")
+	logger.Success("Database migrated successfully")
 
 }
 
@@ -24,7 +24,7 @@ func CreateTables() {
 
 	hasMigrated := false
 
-	helpers.Info("Creating tables...")
+	logger.Info("Creating tables...")
 
 	if !db.Migrator().HasTable(&migrations.User{}) {
 		if err := db.Migrator().CreateTable(&migrations.User{}); err != nil {
@@ -49,10 +49,10 @@ func CreateTables() {
 
 	if hasMigrated {
 
-		helpers.Success("Tables created successfully")
+		logger.Success("Tables created successfully")
 	} else {
 
-		helpers.Warn("Tables are already exist")
+		logger.Warn("Tables are already exist")
 	}
 }
 
@@ -60,7 +60,7 @@ func DropTables() {
 
 	db := database.Connect()
 
-	helpers.Info("Dropping tables...")
+	logger.Info("Dropping tables...")
 
 	if err := db.Migrator().DropTable(&migrations.User{}); err != nil {
 		panic("Failed to drop `user` table")
@@ -70,5 +70,5 @@ func DropTables() {
 		panic("Failed to drop `note` table")
 	}
 
-	helpers.Success("Tables dropped successfully")
+	logger.Success("Tables dropped successfully")
 }

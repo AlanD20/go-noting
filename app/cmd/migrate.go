@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/aland20/go-noting/app/helpers"
+	logger "github.com/aland20/go-noting/app/helpers"
 	"github.com/aland20/go-noting/database/runner"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +17,7 @@ func NewMigrateCommand() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 
 			if fresh {
-				helpers.Warn("All the existing data will be erased")
+				logger.Warn("All the existing data will be erased")
 				isDropped := make(chan bool)
 				go func() {
 					runner.DropTables()
