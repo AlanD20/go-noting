@@ -1,4 +1,4 @@
-package responses
+package response
 
 import (
 	"net/http"
@@ -12,7 +12,7 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
-// Mostly used responses
+// Mostly used response
 
 func Ok(c echo.Context, dt interface{}) error {
 

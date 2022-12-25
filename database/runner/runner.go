@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	logger "github.com/aland20/go-noting/app/loggers"
-	"github.com/aland20/go-noting/app/models"
+	"github.com/aland20/go-noting/app/model"
 	"github.com/aland20/go-noting/database"
 	"gorm.io/gorm"
 )
@@ -15,7 +15,7 @@ func AutoMigrate() {
 
 		logger.Info("Migrating database...")
 
-		err := conn.AutoMigrate(&models.User{}, &models.Note{})
+		err := conn.AutoMigrate(&model.User{}, &model.Note{})
 
 		if err != nil {
 			return err
@@ -35,22 +35,22 @@ func CreateTables() {
 
 		logger.Info("Creating tables...")
 
-		if !conn.Migrator().HasTable(&models.User{}) {
-			if err := conn.Migrator().CreateTable(&models.User{}); err != nil {
+		if !conn.Migrator().HasTable(&model.User{}) {
+			if err := conn.Migrator().CreateTable(&model.User{}); err != nil {
 				logger.Panic("Failed to create `users` table")
 			}
 			hasMigrated = true
 		}
 
-		if !conn.Migrator().HasTable(&models.Note{}) {
-			if err := conn.Migrator().CreateTable(&models.Note{}); err != nil {
+		if !conn.Migrator().HasTable(&model.Note{}) {
+			if err := conn.Migrator().CreateTable(&model.Note{}); err != nil {
 				logger.Panic("Failed to create `notes` table")
 			}
 			hasMigrated = true
 		}
 
-		if !conn.Migrator().HasConstraint(&models.User{}, "fk_users_notes") {
-			if err := conn.Migrator().CreateConstraint(&models.User{}, "fk_users_notes"); err != nil {
+		if !conn.Migrator().HasConstraint(&model.User{}, "fk_users_notes") {
+			if err := conn.Migrator().CreateConstraint(&model.User{}, "fk_users_notes"); err != nil {
 				logger.Panic("Failed to create foreign key on `notes` for `users` table")
 			}
 			hasMigrated = true
@@ -74,11 +74,11 @@ func DropTables() {
 
 		logger.Info("Dropping tables...")
 
-		if err := conn.Migrator().DropTable(&models.User{}); err != nil {
+		if err := conn.Migrator().DropTable(&model.User{}); err != nil {
 			logger.Panic("Failed to drop `user` table")
 		}
 
-		if err := conn.Migrator().DropTable(&models.User{}); err != nil {
+		if err := conn.Migrator().DropTable(&model.User{}); err != nil {
 			logger.Panic("Failed to drop `note` table")
 		}
 
