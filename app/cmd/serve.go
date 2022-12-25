@@ -1,7 +1,8 @@
 package cmd
 
 import (
-	"github.com/aland20/go-noting/app"
+	"github.com/aland20/go-noting/app/apis"
+	logger "github.com/aland20/go-noting/app/loggers"
 	"github.com/spf13/cobra"
 )
 
@@ -12,11 +13,10 @@ func NewServeCommand() *cobra.Command {
 		Short: "Serve the web application",
 		Run: func(cmd *cobra.Command, args []string) {
 
-			err := app.AppInit()
-
-			if err != nil {
-				panic("Failed to start server!")
+			if err := apis.NewBaseApp(); err != nil {
+				logger.Panic("Failed to start the application!")
 			}
+
 		},
 	}
 

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	logger "github.com/aland20/go-noting/app/helpers"
+	logger "github.com/aland20/go-noting/app/loggers"
 	"github.com/aland20/go-noting/database/runner"
 	"github.com/spf13/cobra"
 )

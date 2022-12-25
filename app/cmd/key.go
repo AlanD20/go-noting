@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	logger "github.com/aland20/go-noting/app/helpers"
+	logger "github.com/aland20/go-noting/app/loggers"
 	"github.com/labstack/gommon/color"
 	"github.com/spf13/cobra"
 )

@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/aland20/go-noting/app/cmd"
 	"github.com/aland20/go-noting/app/utils"
 )
@@ -8,5 +11,10 @@ import (
 func main() {
 
 	utils.LoadEnv()
-	cmd.Execute()
+
+	if err := cmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 }

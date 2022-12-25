@@ -1,74 +1,89 @@
 package runner
 
 import (
-	logger "github.com/aland20/go-noting/app/helpers"
+	"database/sql"
+
+	logger "github.com/aland20/go-noting/app/loggers"
 	"github.com/aland20/go-noting/app/models"
 	"github.com/aland20/go-noting/database"
+	"gorm.io/gorm"
 )
 
 func AutoMigrate() {
 
-	db := database.Connect()
+	database.StartTemporaryConnection(func(conn *gorm.DB, _ *sql.DB) error {
 
-	logger.Info("Migrating database...")
+		logger.Info("Migrating database...")
 
-	db.AutoMigrate(&models.User{}, &models.Note{})
+		err := conn.AutoMigrate(&models.User{}, &models.Note{})
 
-	logger.Success("Database migrated successfully")
+		if err != nil {
+			return err
+		}
 
+		logger.Success("Database migrated successfully")
+
+		return nil
+	})
 }
 
 func CreateTables() {
 
-	db := database.Connect()
+	database.StartTemporaryConnection(func(conn *gorm.DB, _ *sql.DB) error {
 
-	hasMigrated := false
+		hasMigrated := false
 
-	logger.Info("Creating tables...")
+		logger.Info("Creating tables...")
 
-	if !db.Migrator().HasTable(&models.User{}) {
-		if err := db.Migrator().CreateTable(&models.User{}); err != nil {
-			panic("Failed to create `users` table")
+		if !conn.Migrator().HasTable(&models.User{}) {
+			if err := conn.Migrator().CreateTable(&models.User{}); err != nil {
+				logger.Panic("Failed to create `users` table")
+			}
+			hasMigrated = true
 		}
-		hasMigrated = true
-	}
 
-	if !db.Migrator().HasTable(&models.Note{}) {
-		if err := db.Migrator().CreateTable(&models.Note{}); err != nil {
-			panic("Failed to create `notes` table")
+		if !conn.Migrator().HasTable(&models.Note{}) {
+			if err := conn.Migrator().CreateTable(&models.Note{}); err != nil {
+				logger.Panic("Failed to create `notes` table")
+			}
+			hasMigrated = true
 		}
-		hasMigrated = true
-	}
 
-	if !db.Migrator().HasConstraint(&models.User{}, "fk_users_notes") {
-		if err := db.Migrator().CreateConstraint(&models.User{}, "fk_users_notes"); err != nil {
-			panic("Failed to create foreign key on `notes` for `users` table")
+		if !conn.Migrator().HasConstraint(&models.User{}, "fk_users_notes") {
+			if err := conn.Migrator().CreateConstraint(&models.User{}, "fk_users_notes"); err != nil {
+				logger.Panic("Failed to create foreign key on `notes` for `users` table")
+			}
+			hasMigrated = true
 		}
-		hasMigrated = true
-	}
 
-	if hasMigrated {
+		if hasMigrated {
 
-		logger.Success("Tables created successfully")
-	} else {
+			logger.Success("Tables created successfully")
+		} else {
 
-		logger.Warn("Tables are already exist")
-	}
+			logger.Warn("Tables are already exist")
+		}
+
+		return nil
+	})
 }
 
 func DropTables() {
 
-	db := database.Connect()
+	database.StartTemporaryConnection(func(conn *gorm.DB, _ *sql.DB) error {
 
-	logger.Info("Dropping tables...")
+		logger.Info("Dropping tables...")
 
-	if err := db.Migrator().DropTable(&models.User{}); err != nil {
-		panic("Failed to drop `user` table")
-	}
+		if err := conn.Migrator().DropTable(&models.User{}); err != nil {
+			logger.Panic("Failed to drop `user` table")
+		}
 
-	if err := db.Migrator().DropTable(&models.User{}); err != nil {
-		panic("Failed to drop `note` table")
-	}
+		if err := conn.Migrator().DropTable(&models.User{}); err != nil {
+			logger.Panic("Failed to drop `note` table")
+		}
 
-	logger.Success("Tables dropped successfully")
+		logger.Success("Tables dropped successfully")
+
+		return nil
+	})
 }

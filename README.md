@@ -2,8 +2,6 @@
 
 Go-Noting is a simple, easy-to-use, noting web application.
 
-The project structure is inspired by Laravel, a PHP framework to build web applications.
-
 ## Stacks
 
 The server side is built with Go to handle operations including CRUD and migraiton. The primary packages that are used in the server side are:

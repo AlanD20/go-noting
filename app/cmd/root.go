@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
 )
 
@@ -13,14 +10,11 @@ var rootCmd = &cobra.Command{
 	Long:  `Learn more at https://github.com/AlanD20/go-noting`,
 }
 
-func Execute() {
+func Execute() error {
 
 	rootCmd.AddCommand(NewMigrateCommand())
 	rootCmd.AddCommand(NewServeCommand())
 	rootCmd.AddCommand(NewKeyCommand())
 
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	return rootCmd.Execute()
 }

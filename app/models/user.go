@@ -3,20 +3,19 @@ package models
 import (
 	"strings"
 
-	"github.com/aland20/go-noting/database"
 	"gorm.io/gorm"
 )
 
 type UserSchema struct {
-	Username string `gorm:"unique;not null;" json:"username" form:"username"`
-	Email    string `gorm:"unique;not null;" json:"email" form:"email"`
-	Password string `gorm:"not null;" json:"password" form:"password"`
+	Username string `gorm:"unique;not null;" json:"username,omitempty" form:"username"`
+	Email    string `gorm:"unique;not null;" json:"email,omitempty" form:"email"`
+	Password string `gorm:"not null;" json:"password,omitempty" form:"password"`
 }
 
 type User struct {
 	BaseModel
 	UserSchema
-	Notes []Note `gorm:"foreignKey:UserId;Constraints:onDelete:Cascade;"`
+	Notes []Note `gorm:"foreignKey:UserId;Constraints:onDelete:Cascade;" json:"notes"`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
@@ -28,9 +27,9 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-func (u *UserSchema) Create() error {
+func (u *UserSchema) NewUser() *User {
 
-	user := User{
+	user := &User{
 		UserSchema: UserSchema{
 			Username: u.Username,
 			Email:    u.Email,
@@ -38,7 +37,13 @@ func (u *UserSchema) Create() error {
 		},
 	}
 
-	err := database.Connect().Create(&user).Error
+	return user
+}
 
-	return err
+func (u *UserSchema) UpdateUser(user *User) {
+
+	user.Username = u.Username
+	user.Email = u.Email
+	user.Password = u.Password
+
 }

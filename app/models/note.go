@@ -3,7 +3,6 @@ package models
 import (
 	"strings"
 
-	"github.com/aland20/go-noting/database"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -29,7 +28,7 @@ func (n *Note) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-func (n *NoteSchema) Create() error {
+func (n *NoteSchema) Create(conn *gorm.DB) error {
 
 	note := Note{
 		NoteSchema: NoteSchema{
@@ -40,7 +39,7 @@ func (n *NoteSchema) Create() error {
 		},
 	}
 
-	err := database.Connect().Create(&note).Error
+	err := conn.Create(&note).Error
 
 	return err
 }
