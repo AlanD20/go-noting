@@ -21,68 +21,70 @@ func BindUserApi(app *BaseApp, rg *echo.Group) {
 	rg.DELETE("/users/:username", api.DestroyUser).Name = "user.destroy"
 }
 
-func (ctr *UserController) IndexUser(c echo.Context) error {
+func (ctr *UserController) IndexUser(ctx echo.Context) error {
 
 	users := &[]model.User{}
 
-	err := ctr.App.Connection.Select("id", "username", "email", "created_at", "updated_at").Find(&users).Error
+	err := ctr.App.Connection.Select("id", "username", "email", "created_at", "updated_at").
+		Find(&users).
+		Error
 
 	if err != nil {
-		return response.NotFound(c)
+		return response.NotFound(ctx)
 	}
 
-	return response.Ok(c, users)
+	return response.Ok(ctx, users)
 }
 
-func (ctr *UserController) ShowUser(c echo.Context) error {
+func (ctr *UserController) ShowUser(ctx echo.Context) error {
 
 	user := &model.User{}
-	username := c.Param("username")
+	username := ctx.Param("username")
 
 	err := ctr.App.Connection.Where("username = ?", username).Take(&user).Error
 
 	if err != nil {
-		return response.NotFound(c)
+		return response.NotFound(ctx)
 	}
 
-	return response.Ok(c, user)
+	return response.Ok(ctx, user)
 }
 
-func (ctr *UserController) StoreUser(c echo.Context) error {
+func (ctr *UserController) StoreUser(ctx echo.Context) error {
 
 	u := &model.UserSchema{}
 
 	// Bind incoming form to u (UserSchema) type
-	if err := c.Bind(&u); err != nil {
-		return response.BadRequest(c)
+	if err := ctx.Bind(&u); err != nil {
+		return response.BadRequest(ctx)
 	}
 
 	// Construct User type from UserSchema
 	user := u.NewUser()
 
 	if err := ctr.App.Connection.Create(&user).Error; err != nil {
-		return response.BadRequest(c)
+		return response.BadRequest(ctx)
 	}
 
-	return response.Created(c, &u)
+	return response.Created(ctx, &u)
 }
 
-func (ctr *UserController) UpdateUser(c echo.Context) error {
+func (ctr *UserController) UpdateUser(ctx echo.Context) error {
 
 	user := &model.User{}
 	u := &model.UserSchema{}
-	username := c.Param("username")
+	username := ctx.Param("username")
 
 	// Bind incoming form to u (UserSchema) type
-	if err := c.Bind(&u); err != nil {
-		return response.BadRequest(c)
+	if err := ctx.Bind(&u); err != nil {
+		return response.BadRequest(ctx)
 	}
 
 	// Retrieve user
 	err := ctr.App.Connection.Where("username = ?", username).Take(&user).Error
 
 	if err != nil {
-		return response.NotFound(c)
+		return response.NotFound(ctx)
 	}
 
 	// Update user (User) retrieved from DB values with u (User Schema)
@@ -90,29 +92,29 @@ func (ctr *UserController) UpdateUser(c echo.Context) error {
 
 	// Run update query to database
 	if err := ctr.App.Connection.Updates(&user).Error; err != nil {
-		return response.UnprocessableEntity(c)
+		return response.UnprocessableEntity(ctx)
 	}
 
-	return response.Update(c, user)
+	return response.Update(ctx, user)
 }
 
-func (ctr *UserController) DestroyUser(c echo.Context) error {
+func (ctr *UserController) DestroyUser(ctx echo.Context) error {
 
 	user := &model.User{}
-	username := c.Param("username")
+	username := ctx.Param("username")
 
 	errTake := ctr.App.Connection.Where("username = ?", username).Take(&user).Error
 
 	if errTake != nil {
-		return response.NotFound(c)
+		return response.NotFound(ctx)
 	}
 
 	// Delete user for given username
 	errDel := ctr.App.Connection.Where("username = ?", username).Delete(&user).Error
 
 	if errDel != nil {
-		return response.UnprocessableEntity(c)
+		return response.UnprocessableEntity(ctx)
 	}
 
-	return response.Delete(c)
+	return response.Delete(ctx)
 }

@@ -8,8 +8,8 @@ import (
 
 type UserSchema struct {
 	Username string `gorm:"unique;not null;" json:"username,omitempty" form:"username"`
-	Email    string `gorm:"unique;not null;" json:"email,omitempty" form:"email"`
-	Password string `gorm:"not null;" json:"password,omitempty" form:"password"`
+	Email    string `gorm:"unique;not null;" json:"email,omitempty"    form:"email"`
+	Password string `gorm:"not null;"        json:"password,omitempty" form:"password"`
 }
 
 type User struct {
