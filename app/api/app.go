@@ -58,7 +58,9 @@ func AppInit(app *BaseApp) {
 
 	groups := e.Group("/api")
 
+	// APIs and passing route group
 	BindUserApi(app, groups)
+	BindNoteApi(app, groups)
 
 	fmt.Println("🚀 Serving on http://127.0.0.1:8000")
 
